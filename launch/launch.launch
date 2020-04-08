@@ -1,6 +1,6 @@
 <launch>
-    <arg name="model" defult="$(find planesim_description)/urdf/planesil_model.xacro"/>
-    <arg name="rviz_conf" default="$(find planesim_description)/rviz/conf1.rviz"/>
+    <arg name="model" value="$(find planesim_description)/urdf/planesil_model.xacro"/>
+    <arg name="rviz_conf" value="$(find planesim_description)/rviz/rvizConfig.rviz"/>
 
     <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
 
