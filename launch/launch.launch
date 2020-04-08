@@ -1,0 +1,11 @@
+<launch>
+    <arg name="model" defult="$(find planesim_description)/urdf/planesil_model.xacro"/>
+    <arg name="rviz_conf" default="$(find planesim_description)/rviz/conf1.rviz"/>
+
+    <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+    
+    <node name="rviz" pkg="rviz" type="rviz" args="$(arg rviz_conf)" required="true" />
+</launch>
