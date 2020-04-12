@@ -33,7 +33,7 @@
     <xacro:property name="bodyMass" value="300"/>
     <xacro:property name="wingY" value="5"/>
     <xacro:property name="wingX" value="1.5"/>
-    <xacro:property name="wingZ" value="${bodyZ/2}"/>
+    <xacro:property name="wingZ" value="${bodyZ/4}"/>
     <xacro:property name="wingMass" value="100"/>
 
     <!-- X axis is down the runway -->
@@ -105,6 +105,42 @@
         <parent link="body"/>
         <child link="leftWing"/>
         <origin xyz="0 ${bodyY/2 + wingY/2} 0" rpy="0 0 0"/>
+        <axis xyz="0 1 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="rightWing">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <mass value="${wingMass}"/>
+            <xacro:box_inertia m="${wingMass}" x="${wingX}" y="${wingY}" z="${wingZ}"/>
+        </inertial>
+
+        <collision> 
+            <origin xyz="0 0 0" rpy="0 0 0"/>  
+            <geometry> 
+                <box size="${wingX} ${wingY} ${wingZ}"/> 
+            </geometry> 
+        </collision>
+
+        <visual> 
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <geometry> 
+                <box size="${wingX} ${wingY} ${wingZ}"/> 
+            </geometry> 
+            <material name="green"/>
+        </visual>
+    </link>
+
+    <gazebo reference="rightWing">
+        <material>
+            Gazebo/Green
+        </material>
+    </gazebo>
+
+    <joint name="rightWing_joint" type="continuous">
+        <parent link="body"/>
+        <child link="rightWing"/>
+        <origin xyz="0 ${-(bodyY/2 + wingY/2)} 0" rpy="0 0 0"/>
         <axis xyz="0 1 0" rpy="0 0 0"/>
     </joint>
 
