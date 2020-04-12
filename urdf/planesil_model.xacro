@@ -4,10 +4,9 @@
     <xacro:include filename="$(find planesim_description)/urdf/macros.xacro" />
 
     <!-- Body of plane -->
-    <link name="body">
+    <!-- <link name="body">
         <inertial>
             <origin xyz="-0.0414 0 0.9271" rpy="0 0 0"/>
-            <!-- <origin xyz="0 0 0" rpy="0 0 0"/> -->
             <mass value="680.389"/>
             <inertia ixx="1285.315427874" ixy="0.0" ixz="0.0" iyy="1824.930976707" iyz="0.0" izz="2666.893931043"/>
         </inertial>
@@ -26,82 +25,88 @@
             </geometry>
             <material name="blue"/>
         </visual>
+    </link> -->
+
+    <xacro:property name="bodyY" value="1"/>
+    <xacro:property name="bodyX" value="8"/>
+    <xacro:property name="bodyZ" value="1"/>
+    <xacro:property name="bodyMass" value="300"/>
+    <xacro:property name="wingY" value="5"/>
+    <xacro:property name="wingX" value="1.5"/>
+    <xacro:property name="wingZ" value="${bodyZ/2}"/>
+    <xacro:property name="wingMass" value="100"/>
+
+    <!-- X axis is down the runway -->
+
+
+    <link name="body">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="${bodyMass}"/>
+            <xacro:box_inertia m="${bodyMass}" x="${bodyX}" y="${bodyY}" z="${bodyZ}"/>
+        </inertial>
+
+        <collision> 
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <geometry> 
+                <box size="${bodyX} ${bodyY} ${bodyZ}"/> 
+            </geometry> 
+        </collision>
+
+        <visual> 
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <geometry> 
+                <box size="${bodyX} ${bodyY} ${bodyZ}"/> 
+            </geometry> 
+            <material name="orange"/>
+        </visual>
     </link>
 
-    <link name='base_link'/>
+    <gazebo reference="body">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+
+    <link name="base_link"/>
     <joint name="base_joint" type="fixed">
         <parent link="base_link"/>
         <child link="body"/>
     </joint>
 
-    <!-- Left aileron -->
-    <link name="left_aileron">
+    <link name="leftWing">
         <inertial>
-            <origin xyz="1.85 -3.7 -1.4" rpy="-0.05 -0 0.12" />
-            <mass value="2"/>
-            <inertia ixx="0.8434" ixy="0.0" ixz="0.0" iyy="0.0119" iyz="0.0" izz="0.855"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <mass value="${wingMass}"/>
+            <xacro:box_inertia m="${wingMass}" x="${wingX}" y="${wingY}" z="${wingZ}"/>
         </inertial>
 
-        <collision>
-            <origin xyz="1.85 -3.7 -1.4" rpy="-0.05 -0 0.12" />
-            <geometry>
-                <mesh filename="package://planesim_description/meshes/left_aileron.dae"/>
-            </geometry>
+        <collision> 
+            <origin xyz="0 0 0" rpy="0 0 0"/>  
+            <geometry> 
+                <box size="${wingX} ${wingY} ${wingZ}"/> 
+            </geometry> 
         </collision>
 
-        <visual>
-            <origin xyz="1.85 -3.7 -1.4" rpy="-0.05 -0 0.12" />
-            <geometry>
-                <mesh filename="package://planesim_description/meshes/left_aileron.dae"/>
-            </geometry>
-            <material name="blue"/>
+        <visual> 
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <geometry> 
+                <box size="${wingX} ${wingY} ${wingZ}"/> 
+            </geometry> 
+            <material name="red"/>
         </visual>
     </link>
 
-    <joint name="left_aileron_joint" type="continuous">
+    <gazebo reference="leftWing">
+        <material>
+            Gazebo/Red
+        </material>
+    </gazebo>
+
+    <joint name="leftWing_joint" type="continuous">
         <parent link="body"/>
-        <child link="left_aileron"/>
+        <child link="leftWing"/>
+        <origin xyz="0 ${bodyY/2 + wingY/2} 0" rpy="0 0 0"/>
         <axis xyz="0 1 0" rpy="0 0 0"/>
-        <origin xyz="-1.45 3.7 1.5" rpy="0.05 0 -0.12" />
-        <limit lower="-0.5233" upper="0.5233" effort="100000" velocity="100000"/>
     </joint>
-
-    <xacro:joint_transmission joint_name="left_aileron"/>
-    
-    <!-- Right aileron -->
-    <link name="right_aileron">
-        <inertial>
-            <origin xyz="1.85 3.7 -1.4" rpy="0.05 -0 -0.12" />
-            <mass value="2"/>
-            <inertia ixx="0.8434" ixy="0.0" ixz="0.0" iyy="0.0119" iyz="0.0" izz="0.855"/>
-        </inertial>
-
-        <collision>
-            <origin xyz="1.85 3.7 -1.4" rpy="0.05 -0 -0.12" />
-            <geometry>
-                <mesh filename="package://planesim_description/meshes/right_aileron.dae"/>
-            </geometry>
-        </collision>
-
-        <visual>
-            <origin xyz="1.85 3.7 -1.4" rpy="0.05 -0 -0.12" />
-            <geometry>
-                <mesh filename="package://planesim_description/meshes/right_aileron.dae"/>
-            </geometry>
-            <material name="blue"/>
-        </visual>
-    </link>
-
-    <joint name="right_aileron_joint" type="continuous">
-        <parent link="body"/>
-        <child link="right_aileron"/>
-        <axis xyz="0 1 0" rpy="0 0 0"/>
-        <origin xyz="-1.45 -3.7 1.5" rpy="-0.05 0 0.12" />
-        <limit lower="-0.5233" upper="0.5233" effort="100000" velocity="100000"/>
-    </joint>
-
-    <xacro:joint_transmission joint_name="right_aileron"/>
-
 
     <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
