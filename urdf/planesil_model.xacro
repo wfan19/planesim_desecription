@@ -42,7 +42,7 @@
     <xacro:property name="landingGearX" value="0.125"/>
     <xacro:property name="landingGearZ" value="1"/>
     <xacro:property name="landingGearMass" value="10"/>
-    
+
     <xacro:property name="wheelWidth" value="0.1"/>
     <xacro:property name="wheelRadius" value="0.25"/>
     <xacro:property name="wheelMass" value="5"/>
@@ -97,6 +97,9 @@
             Gazebo/Green
         </material>
     </gazebo>
+
+    <xacro:landingGear name="front" front="1"/>
+    <xacro:landingGear name="back" front="-1"/>
 
     <xacro:wheel name="frontLeft_wheel" front="1" left="1" />
     <xacro:wheel name="frontRight_wheel" front="1" left="-1" />
