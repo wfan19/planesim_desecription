@@ -29,17 +29,22 @@
     <xacro:property name="PI" value="3.14"/>
 
     <xacro:property name="bodyY" value="0.5"/>
-    <xacro:property name="bodyX" value="8"/>
+    <xacro:property name="bodyX" value="6"/>
     <xacro:property name="bodyZ" value="0.5"/>
     <xacro:property name="bodyMass" value="300"/>
 
     <xacro:property name="wingY" value="5"/>
-    <xacro:property name="wingX" value="1.5"/>
+    <xacro:property name="wingX" value="1"/>
     <xacro:property name="wingZ" value="${bodyZ/4}"/>
     <xacro:property name="wingMass" value="100"/>
 
+    <xacro:property name="landingGearY" value="${bodyY}"/>
+    <xacro:property name="landingGearX" value="0.125"/>
+    <xacro:property name="landingGearZ" value="1"/>
+    <xacro:property name="landingGearMass" value="10"/>
+    
     <xacro:property name="wheelWidth" value="0.1"/>
-    <xacro:property name="wheelRadius" value="0.5"/>
+    <xacro:property name="wheelRadius" value="0.25"/>
     <xacro:property name="wheelMass" value="5"/>
 
     <!-- X axis is down the runway -->
@@ -78,77 +83,20 @@
         <child link="body"/>
     </joint>
 
-    <link name="leftWing">
-        <inertial>
-            <origin xyz="0 0 0" rpy="0 0 0"/> 
-            <mass value="${wingMass}"/>
-            <xacro:box_inertia m="${wingMass}" x="${wingX}" y="${wingY}" z="${wingZ}"/>
-        </inertial>
 
-        <collision> 
-            <origin xyz="0 0 0" rpy="0 0 0"/>  
-            <geometry> 
-                <box size="${wingX} ${wingY} ${wingZ}"/> 
-            </geometry> 
-        </collision>
-
-        <visual> 
-            <origin xyz="0 0 0" rpy="0 0 0"/> 
-            <geometry> 
-                <box size="${wingX} ${wingY} ${wingZ}"/> 
-            </geometry> 
-            <material name="red"/>
-        </visual>
-    </link>
-
-    <gazebo reference="leftWing">
+    <xacro:wing name="left" left="1"/>
+    <gazebo reference="left_wing">
         <material>
             Gazebo/Red
         </material>
     </gazebo>
 
-    <joint name="leftWing_joint" type="continuous">
-        <parent link="body"/>
-        <child link="leftWing"/>
-        <origin xyz="0 ${bodyY/2 + wingY/2} 0" rpy="0 0 0"/>
-        <axis xyz="0 1 0" rpy="0 0 0"/>
-    </joint>
-
-    <link name="rightWing">
-        <inertial>
-            <origin xyz="0 0 0" rpy="0 0 0"/> 
-            <mass value="${wingMass}"/>
-            <xacro:box_inertia m="${wingMass}" x="${wingX}" y="${wingY}" z="${wingZ}"/>
-        </inertial>
-
-        <collision> 
-            <origin xyz="0 0 0" rpy="0 0 0"/>  
-            <geometry> 
-                <box size="${wingX} ${wingY} ${wingZ}"/> 
-            </geometry> 
-        </collision>
-
-        <visual> 
-            <origin xyz="0 0 0" rpy="0 0 0"/> 
-            <geometry> 
-                <box size="${wingX} ${wingY} ${wingZ}"/> 
-            </geometry> 
-            <material name="green"/>
-        </visual>
-    </link>
-
-    <gazebo reference="rightWing">
+    <xacro:wing name="right" left="-1"/>
+    <gazebo reference="right_wing">
         <material>
             Gazebo/Green
         </material>
     </gazebo>
-
-    <joint name="rightWing_joint" type="continuous">
-        <parent link="body"/>
-        <child link="rightWing"/>
-        <origin xyz="0 ${-(bodyY/2 + wingY/2)} 0" rpy="0 0 0"/>
-        <axis xyz="0 1 0" rpy="0 0 0"/>
-    </joint>
 
     <xacro:wheel name="frontLeft_wheel" front="1" left="1" />
     <xacro:wheel name="frontRight_wheel" front="1" left="-1" />

@@ -36,6 +36,69 @@
     </xacro:macro>
 
 
+    <xacro:macro name="wing" params="name left">
+        <link name="${name}_wing">
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/> 
+                <mass value="${wingMass}"/>
+                <xacro:box_inertia m="${wingMass}" x="${wingX}" y="${wingY}" z="${wingZ}"/>
+            </inertial>
+
+            <collision> 
+                <origin xyz="0 0 0" rpy="0 0 0"/>  
+                <geometry> 
+                    <box size="${wingX} ${wingY} ${wingZ}"/> 
+                </geometry> 
+            </collision>
+
+            <visual> 
+                <origin xyz="0 0 0" rpy="0 0 0"/> 
+                <geometry> 
+                    <box size="${wingX} ${wingY} ${wingZ}"/> 
+                </geometry> 
+                <material name="red"/>
+            </visual>
+        </link>
+
+        <joint name="${name}_wing_joint" type="continuous">
+            <parent link="body"/>
+            <child link="${name}_wing"/>
+            <origin xyz="0 ${left * (bodyY/2 + wingY/2)} 0" rpy="0 0 0"/>
+            <axis xyz="0 1 0" rpy="0 0 0"/>
+        </joint>
+    </xacro:macro>
+
+    <xacro:macro name="landingGear" params="name front">
+        <link name="${name}_landingGear">
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="${landingGearMass}"/>
+                <xacro:box_inertia m="${landingGearMass}" x="${landingGearX}" y="${landingGearY}" z="${landingGearZ}"/>
+            </inertial>
+
+            <collision> 
+                <origin xyz="0 0 0" rpy="0 0 0"/> 
+                <geometry> 
+                    <box size="${landingGearX} ${landingGearY} ${landingGearZ}"/> 
+                </geometry> 
+            </collision>
+
+            <visual> 
+                <origin xyz="0 0 0" rpy="0 0 0"/> 
+                <geometry> 
+                    <box size="${landingGearX} ${landingGearY} ${landingGearZ}"/> 
+                </geometry> 
+                <material name="orange"/>
+            </visual>
+        </link>
+        
+        <joint name="${name}_landingGear_joint" type="fixed">
+            <parent link="body"/>
+            <child link="${name}_landingGear"/>
+            <origin xyz="${front * (bodyX/2 - landingGearX/2)} 0 ${bodyZ/2-landingGearZ/2}" rpy="0 0 0"/>
+        </joint>
+    </xacro:macro>
+
     <xacro:macro name="wheel" params="name front left">
          <link name="${name}_wheel">
             <collision>
