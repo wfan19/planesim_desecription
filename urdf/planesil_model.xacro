@@ -85,18 +85,7 @@
 
 
     <xacro:wing name="left" left="1"/>
-    <gazebo reference="left_wing">
-        <material>
-            Gazebo/Red
-        </material>
-    </gazebo>
-
     <xacro:wing name="right" left="-1"/>
-    <gazebo reference="right_wing">
-        <material>
-            Gazebo/Green
-        </material>
-    </gazebo>
 
     <xacro:landingGear name="front" front="1"/>
     <xacro:landingGear name="back" front="-1"/>

@@ -56,9 +56,30 @@
                 <geometry> 
                     <box size="${wingX} ${wingY} ${wingZ}"/> 
                 </geometry> 
-                <material name="red"/>
+
+                <!-- Port/Starboard colors -->
+                <xacro:if value="${left == 1}">
+                    <material name="red"/>
+                </xacro:if>
+                <xacro:unless value="${left == 1}">
+                    <material name="green"/>
+                </xacro:unless>
             </visual>
         </link>
+
+        <gazebo reference="${name}_wing">
+            <xacro:if value="${left == 1}">
+                <material>
+                    Gazebo/Red
+                </material>
+            </xacro:if>
+            <xacro:unless value="${left == 1}">
+                <material>
+                    Gazebo/Green
+                </material>
+            </xacro:unless>
+
+        </gazebo>
 
         <joint name="${name}_wing_joint" type="continuous">
             <parent link="body"/>
@@ -134,7 +155,7 @@
 
 
         <joint name="${name}_wheel_hinge" type="continuous">
-
+            <!-- Different parent landingGears for front/back wheels -->
             <xacro:if value="${front == 1}">
                 <parent link="front_landingGear"/>
             </xacro:if>
