@@ -2,30 +2,7 @@
 <robot name="planesil" xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:include filename="$(find planesim_description)/urdf/materials.xacro" />
     <xacro:include filename="$(find planesim_description)/urdf/macros.xacro" />
-
-    <!-- Body of plane -->
-    <!-- <link name="body">
-        <inertial>
-            <origin xyz="-0.0414 0 0.9271" rpy="0 0 0"/>
-            <mass value="680.389"/>
-            <inertia ixx="1285.315427874" ixy="0.0" ixz="0.0" iyy="1824.930976707" iyz="0.0" izz="2666.893931043"/>
-        </inertial>
-
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <mesh filename="package://planesim_description/meshes/body.dae"/>
-            </geometry>
-        </collision>
-
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <mesh filename="package://planesim_description/meshes/body.dae"/>
-            </geometry>
-            <material name="blue"/>
-        </visual>
-    </link> -->
+    
     <xacro:property name="PI" value="3.14"/>
 
     <xacro:property name="bodyY" value="0.5"/>
@@ -47,8 +24,19 @@
     <xacro:property name="wheelRadius" value="0.25"/>
     <xacro:property name="wheelMass" value="5"/>
 
-    <!-- X axis is down the runway -->
+    <xacro:property name="propellorBlockX" value="0.25"/>
+    <xacro:property name="propellorBlockY" value="${bodyY/2}"/>
+    <xacro:property name="propellorBlockZ" value="${bodyZ/2}" />
+    <xacro:property name="propellorBlockMass" value="5"/>
 
+    <xacro:property name="propellorX" value="1.5"/>      <!-- Length of blade -->
+    <xacro:property name="propellorY" value="0.2"/>   <!-- Width of blade -->
+    <xacro:property name="propellorZ" value="0.1"/>    <!-- Thickness of blade -->
+    <xacro:property name="propellorMass" value="2"/>
+
+    <!-- X axis is down the runway -->
+    <!-- Y axis is to the left of the runway, looking down -->
+    <!-- Z axis is up -->
 
     <link name="body">
         <inertial>
@@ -94,6 +82,72 @@
     <xacro:wheel name="frontRight_wheel" front="1" left="-1" />
     <xacro:wheel name="backLeft_wheel" front="-1" left="1" />
     <xacro:wheel name="backRight_wheel" front="-1" left="-1" />
+
+    <link name="propellorBlock">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="${propellorBlockMass}"/>
+            <xacro:box_inertia m="${propellorBlockMass}" x="${propellorBlockX}" y="${propellorBlockY}" z="${propellorBlockZ}"/>
+        </inertial>
+
+        <collision> 
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <geometry> 
+                <box size="${propellorBlockX} ${propellorBlockY} ${propellorBlockZ}"/> 
+            </geometry> 
+        </collision>
+
+        <visual> 
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <geometry> 
+                <box size="${propellorBlockX} ${propellorBlockY} ${propellorBlockZ}"/> 
+            </geometry> 
+            <material name="orange"/>
+        </visual>
+    </link>
+
+    <gazebo reference="propellorBlock">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+
+    <joint name="propellorBlockJoint" type="fixed">
+        <parent link="body"/>
+        <child link="propellorBlock"/>
+        <origin xyz="${bodyX/2 + propellorBlockX/2} 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <link name="propellor">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 ${PI/2} 0"/>
+            <mass value="${propellorMass}"/>
+            <xacro:box_inertia m="${propellorMass}" x="${propellorX}" y="${propellorY}" z="${propellorZ}"/>
+        </inertial>
+
+        <collision> 
+            <origin xyz="0 0 0" rpy="0 ${PI/2} 0"/>
+            <geometry> 
+                <box size="${propellorX} ${propellorY} ${propellorZ}"/> 
+            </geometry> 
+        </collision>
+
+        <visual> 
+            <origin xyz="0 0 0" rpy="0 ${PI/2} 0"/>
+            <geometry> 
+                <box size="${propellorX} ${propellorY} ${propellorZ}"/> 
+            </geometry> 
+            <material name="blue"/>
+        </visual>
+    </link>
+
+    <gazebo reference="propellor">
+        <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <joint name="propellorJoint" type="continuous">
+        <parent link="propellorBlock" />
+        <child link="propellor" />
+        <origin xyz="${propellorBlockX/2 + propellorZ/2} 0 0" rpy="0 0 0"/>
+    </joint>
 
     <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
