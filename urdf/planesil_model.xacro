@@ -110,7 +110,7 @@
         <material>Gazebo/Orange</material>
     </gazebo>
 
-    <joint name="propellorBlockJoint" type="fixed">
+    <joint name="propellorBlock_joint" type="fixed">
         <parent link="body"/>
         <child link="propellorBlock"/>
         <origin xyz="${bodyX/2 + propellorBlockX/2} 0 0" rpy="0 0 0"/>
@@ -143,10 +143,45 @@
         <material>Gazebo/Blue</material>
     </gazebo>
 
-    <joint name="propellorJoint" type="continuous">
+    <joint name="propellor_joint" type="continuous">
         <parent link="propellorBlock" />
         <child link="propellor" />
         <origin xyz="${propellorBlockX/2 + propellorZ/2} 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <xacro:property name="counterWeightCoGXOffset" value="${((propellorBlockMass * propellorBlockX/2) + propellorMass * (propellorBlockX/2 + propellorZ/2))
+                                                /(propellorBlockMass + propellorMass)}"/> <!-- Center of gravity from the edge of the body -->
+    <link name="counterWeight">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="${propellorBlockMass + propellorMass}"/>
+            <xacro:box_inertia m="${propellorBlockMass + propellorMass}" x="${2 * counterWeightCoGXOffset}" y="${bodyY}" z="${bodyZ}"/>
+        </inertial>
+
+        <collision> 
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <geometry> 
+                <box size="${2 * counterWeightCoGXOffset} ${bodyY} ${bodyZ}"/> 
+            </geometry> 
+        </collision>
+
+        <visual> 
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <geometry> 
+                <box size="${2 * counterWeightCoGXOffset} ${bodyY} ${bodyZ}"/> 
+            </geometry> 
+            <material name="orange"/>
+        </visual>
+    </link>
+
+    <gazebo reference="propellorBlock">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+
+    <joint name="counterWeight_joint" type="fixed">
+        <parent link="body"/>
+        <child link="counterWeight"/>
+        <origin xyz="${-(bodyX/2 + counterWeightCoGXOffset)} 0 0" rpy="0 0 0"/>
     </joint>
 
     <gazebo>
