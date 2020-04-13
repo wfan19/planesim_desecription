@@ -149,6 +149,8 @@
         <origin xyz="${propellorBlockX/2 + propellorZ/2} 0 0" rpy="0 0 0"/>
     </joint>
 
+    <xacro:joint_transmission name="propellor_transmission" joint_name="propellor_joint"/>
+
     <xacro:property name="counterWeightCoGXOffset" value="${((propellorBlockMass * propellorBlockX/2) + propellorMass * (propellorBlockX/2 + propellorZ/2))
                                                 /(propellorBlockMass + propellorMass)}"/> <!-- Center of gravity from the edge of the body -->
     <link name="counterWeight">
