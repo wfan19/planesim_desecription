@@ -24,15 +24,15 @@
     <xacro:property name="wheelRadius" value="0.25"/>
     <xacro:property name="wheelMass" value="5"/>
 
-    <xacro:property name="propellorBlockX" value="0.25"/>
-    <xacro:property name="propellorBlockY" value="${bodyY/2}"/>
-    <xacro:property name="propellorBlockZ" value="${bodyZ/2}" />
-    <xacro:property name="propellorBlockMass" value="5"/>
+    <xacro:property name="propellerBlockX" value="0.25"/>
+    <xacro:property name="propellerBlockY" value="${bodyY/2}"/>
+    <xacro:property name="propellerBlockZ" value="${bodyZ/2}" />
+    <xacro:property name="propellerBlockMass" value="5"/>
 
-    <xacro:property name="propellorX" value="1.5"/>      <!-- Length of blade -->
-    <xacro:property name="propellorY" value="0.2"/>   <!-- Width of blade -->
-    <xacro:property name="propellorZ" value="0.1"/>    <!-- Thickness of blade -->
-    <xacro:property name="propellorMass" value="2"/>
+    <xacro:property name="propellerX" value="1.5"/>      <!-- Length of blade -->
+    <xacro:property name="propellerY" value="0.2"/>   <!-- Width of blade -->
+    <xacro:property name="propellerZ" value="0.1"/>    <!-- Thickness of blade -->
+    <xacro:property name="propellerMass" value="2"/>
 
     <!-- X axis is down the runway -->
     <!-- Y axis is to the left of the runway, looking down -->
@@ -83,81 +83,124 @@
     <xacro:wheel name="backLeft_wheel" front="-1" left="1" />
     <xacro:wheel name="backRight_wheel" front="-1" left="-1" />
 
-    <link name="propellorBlock">
+    <link name="propellerBlock">
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0"/>
-            <mass value="${propellorBlockMass}"/>
-            <xacro:box_inertia m="${propellorBlockMass}" x="${propellorBlockX}" y="${propellorBlockY}" z="${propellorBlockZ}"/>
+            <mass value="${propellerBlockMass}"/>
+            <xacro:box_inertia m="${propellerBlockMass}" x="${propellerBlockX}" y="${propellerBlockY}" z="${propellerBlockZ}"/>
         </inertial>
 
         <collision> 
             <origin xyz="0 0 0" rpy="0 0 0"/> 
             <geometry> 
-                <box size="${propellorBlockX} ${propellorBlockY} ${propellorBlockZ}"/> 
+                <box size="${propellerBlockX} ${propellerBlockY} ${propellerBlockZ}"/> 
             </geometry> 
         </collision>
 
         <visual> 
             <origin xyz="0 0 0" rpy="0 0 0"/> 
             <geometry> 
-                <box size="${propellorBlockX} ${propellorBlockY} ${propellorBlockZ}"/> 
+                <box size="${propellerBlockX} ${propellerBlockY} ${propellerBlockZ}"/> 
             </geometry> 
             <material name="orange"/>
         </visual>
     </link>
 
-    <gazebo reference="propellorBlock">
+    <gazebo reference="propellerBlock">
         <material>Gazebo/Orange</material>
     </gazebo>
 
-    <joint name="propellorBlock_joint" type="fixed">
+    <joint name="propellerBlock_joint" type="fixed">
         <parent link="body"/>
-        <child link="propellorBlock"/>
-        <origin xyz="${bodyX/2 + propellorBlockX/2} 0 0" rpy="0 0 0"/>
+        <child link="propellerBlock"/>
+        <origin xyz="${bodyX/2 + propellerBlockX/2} 0 0" rpy="0 0 0"/>
     </joint>
 
-    <link name="propellor">
+    <link name="propeller">
         <inertial>
             <origin xyz="0 0 0" rpy="0 ${PI/2} 0"/>
-            <mass value="${propellorMass}"/>
-            <xacro:box_inertia m="${propellorMass}" x="${propellorX}" y="${propellorY}" z="${propellorZ}"/>
+            <mass value="${propellerMass}"/>
+            <xacro:box_inertia m="${propellerMass}" x="${propellerX}" y="${propellerY}" z="${propellerZ}"/>
         </inertial>
 
         <collision> 
             <origin xyz="0 0 0" rpy="0 ${PI/2} 0"/>
             <geometry> 
-                <box size="${propellorX} ${propellorY} ${propellorZ}"/> 
+                <box size="${propellerX} ${propellerY} ${propellerZ}"/> 
             </geometry> 
         </collision>
 
         <visual> 
             <origin xyz="0 0 0" rpy="0 ${PI/2} 0"/>
             <geometry> 
-                <box size="${propellorX} ${propellorY} ${propellorZ}"/> 
+                <box size="${propellerX} ${propellerY} ${propellerZ}"/> 
             </geometry> 
             <material name="blue"/>
         </visual>
     </link>
 
-    <gazebo reference="propellor">
+    <gazebo reference="propeller">
         <material>Gazebo/Blue</material>
+        <kp>1000000</kp>
+        <kd>1000000</kd>
+        <mu1>10.0</mu1>
+        <mu2>10.0</mu2>
     </gazebo>
 
-    <joint name="propellor_joint" type="continuous">
-        <parent link="propellorBlock" />
-        <child link="propellor" />
-        <origin xyz="${propellorBlockX/2 + propellorZ/2} 0 0" rpy="0 0 0"/>
+    <joint name="propeller_joint" type="continuous">
+        <parent link="propellerBlock" />
+        <child link="propeller" />
+        <origin xyz="${propellerBlockX/2 + propellerZ/2} 0 0" rpy="0 0 0"/>
     </joint>
 
-    <xacro:joint_transmission name="propellor_transmission" joint_name="propellor_joint"/>
+    <xacro:joint_transmission joint_name="propeller"/>
 
-    <xacro:property name="counterWeightCoGXOffset" value="${((propellorBlockMass * propellorBlockX/2) + propellorMass * (propellorBlockX/2 + propellorZ/2))
-                                                /(propellorBlockMass + propellorMass)}"/> <!-- Center of gravity from the edge of the body -->
+    <gazebo>
+        <!-- <plugin name="propellerTopBlade" filename="libLiftDragPlugin.so">
+            <a0>0.4</a0>
+            <cla>4.752798721</cla>
+            <cda>0.6417112299</cda>
+            <cma>0</cma>
+            <alpha_stall>1.5</alpha_stall>
+            <cla_stall>-3.85</cla_stall>
+            <cda_stall>-0.9233984055</cda_stall>
+            <cma_stall>0</cma_stall>
+            <air_density>1.2041</air_density>
+            <cp> ${propellerZ/2} 0 ${propellerX/4} </cp>
+            <area>${propellerX * propellerY / 2}</area>
+            <forward> 0 1 0 </forward>
+            <upward> 1 0 0</upward>
+            <link_name>propeller</link_name>
+        </plugin> -->
+
+        <plugin name="propellerBottomBlade" filename="libLiftDragPlugin.so">
+            <a0>0.4</a0>
+            <cla>4.752798721</cla>
+            <cda>0.6417112299</cda>
+            <cma>0</cma>
+            <alpha_stall>1.5</alpha_stall>
+            <cla_stall>-3.85</cla_stall>
+            <cda_stall>-0.9233984055</cda_stall>
+            <cma_stall>0</cma_stall>
+            <air_density>1.2041</air_density>
+            <cp> ${propellerZ/2} 0 ${-propellerX/4} </cp>
+            <area>${propellerX * propellerY / 2}</area>
+            <forward> -1 0 0 </forward>
+            <upward> 0 0 1 </upward>
+            <link_name>propeller</link_name>
+        </plugin>
+        
+    </gazebo>
+
+
+
+    <xacro:property name="counterWeightCoGXOffset" value="${((propellerBlockMass * propellerBlockX/2) + propellerMass * (propellerBlockX/2 + propellerZ/2))
+                                                /(propellerBlockMass + propellerMass)}"/> <!-- Center of gravity from the edge of the body -->
     <link name="counterWeight">
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0"/>
-            <mass value="${propellorBlockMass + propellorMass}"/>
-            <xacro:box_inertia m="${propellorBlockMass + propellorMass}" x="${2 * counterWeightCoGXOffset}" y="${bodyY}" z="${bodyZ}"/>
+            <mass value="${propellerBlockMass + propellerMass}"/>
+            <xacro:box_inertia m="${propellerBlockMass + propellerMass}" x="${2 * counterWeightCoGXOffset}" y="${bodyY}" z="${bodyZ}"/>
         </inertial>
 
         <collision> 
@@ -176,7 +219,7 @@
         </visual>
     </link>
 
-    <gazebo reference="propellorBlock">
+    <gazebo reference="propellerBlock">
         <material>Gazebo/Orange</material>
     </gazebo>
 
