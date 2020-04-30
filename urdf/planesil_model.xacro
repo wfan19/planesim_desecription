@@ -156,7 +156,7 @@
     <xacro:joint_transmission joint_name="propeller"/>
 
     <gazebo>
-        <!-- <plugin name="propellerTopBlade" filename="libLiftDragPlugin.so">
+        <plugin name="propellerTopBlade" filename="libLiftDragPlugin.so">
             <a0>0.4</a0>
             <cla>4.752798721</cla>
             <cda>0.6417112299</cda>
@@ -171,7 +171,7 @@
             <forward> 0 1 0 </forward>
             <upward> 1 0 0</upward>
             <link_name>propeller</link_name>
-        </plugin> -->
+        </plugin>
 
         <plugin name="propellerBottomBlade" filename="libLiftDragPlugin.so">
             <a0>0.4</a0>
@@ -184,9 +184,10 @@
             <cma_stall>0</cma_stall>
             <air_density>1.2041</air_density>
             <cp> ${propellerZ/2} 0 ${-propellerX/4} </cp>
-            <area>${propellerX * propellerY / 2}</area>
-            <forward> -1 0 0 </forward>
-            <upward> 0 0 1 </upward>
+            <!-- <area>${propellerX * propellerY / 2}</area> -->
+            <area> 0.5 </area>
+            <forward> 0 -1 0 </forward>
+            <upward> 1 0 0 </upward>
             <link_name>propeller</link_name>
         </plugin>
         
