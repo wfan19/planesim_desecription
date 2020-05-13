@@ -22,7 +22,7 @@
         />
     </macro>
 
-    <xacro:macro name="joint_transmission" params= "joint_name">
+    <xacro:macro name="joint_transmission" params= "joint_name reduction:=10">
         <transmission name="${joint_name}_transmission">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="${joint_name}_joint">
@@ -30,7 +30,7 @@
             </joint>
             <actuator name="${joint_name}_servo">
                 <hardwareInterface>EffortJointInterface</hardwareInterface>
-                <mechanicalReduction>10</mechanicalReduction>
+                <mechanicalReduction>${reduction}</mechanicalReduction>
             </actuator>
         </transmission>
     </xacro:macro>
@@ -88,7 +88,7 @@
             <axis xyz="0 1 0" rpy="0 0 0"/>
         </joint>
 
-        <xacro:joint_transmission joint_name="${name}_wing" />
+        <xacro:joint_transmission joint_name="${name}_wing" reduction="100" />
     </xacro:macro>
 
     <xacro:macro name="landingGear" params="name front">
