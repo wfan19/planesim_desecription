@@ -184,13 +184,57 @@
             <cma_stall>0</cma_stall>
             <air_density>1.2041</air_density>
             <cp> ${propellerZ/2} 0 ${-propellerX/4} </cp>
-            <!-- <area>${propellerX * propellerY / 2}</area> -->
             <area> 0.5 </area>
             <forward> 0 -1 0 </forward>
             <upward> 1 0 0 </upward>
             <link_name>propeller</link_name>
         </plugin>
-        
+<!-- 
+        <plugin name="leftWing" filename="libLiftDragPlugin.so">
+            <a0>0.05984281113</a0>
+            <cla>4.752798721</cla>
+            <cda>0.6417112299</cda>
+            <cma>-1.8</cma>
+            <alpha_stall>0.3391428111</alpha_stall>
+            <cla_stall>-3.85</cla_stall>
+            <cda_stall>-0.9233984055</cda_stall>
+            <cma_stall>0</cma_stall>
+            <air_density> 1.2041 </air_density>
+            <cp> ${wingX/2} ${wingY/2} ${wingZ/2}</cp>
+            <area> ${(wingX/2) * (wingY/2)}</area>
+            <forward> 1 0 0 </forward>
+            <upward> 0 0 1 </upward>
+            <link_name>left_wing</link_name>
+        </plugin>
+
+        <plugin name="rightWing" filename="libLiftDragPlugin.so">
+            <a0>0.05984281113</a0>
+            <cla>4.752798721</cla>
+            <cda>0.6417112299</cda>
+            <cma>-1.8</cma>
+            <alpha_stall>0.3391428111</alpha_stall>
+            <cla_stall>-3.85</cla_stall>
+            <cda_stall>-0.9233984055</cda_stall>
+            <cma_stall>0</cma_stall>
+            <air_density> 1.2041 </air_density>
+            <cp> ${wingX/2} ${wingY/2} ${wingZ/2}</cp>
+            <area> ${(wingX/2) * (wingY/2)}</area>
+            <forward> 1 0 0 </forward>
+            <upward> 0 0 1 </upward>
+            <link_name>left_wing</link_name>
+        </plugin>
+
+        <controller:gazebo_ros_imu name="imu_controller" plugin="libgazebo_ros_imu.so">
+            <alwaysOn>true</alwaysOn>
+            <updateRate>50.0</updateRate> 
+            <bodyName>body</bodyName>
+            <topicName>imu_data</topicName>
+            <gaussianNoise>2.89e-08</gaussianNoise>
+            <xyzOffsets>0 0 0</xyzOffsets>
+            <rpyOffsets>0 0 0</rpyOffsets>
+            <interface:position name="imu_position"/>
+        </controller:gazebo_ros_imu>
+         -->
     </gazebo>
 
 
