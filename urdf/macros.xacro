@@ -81,12 +81,14 @@
 
         </gazebo>
 
-        <joint name="${name}_wing_joint" type="fixed">
+        <joint name="${name}_wing_joint" type="continuous">
             <parent link="body"/>
             <child link="${name}_wing"/>
             <origin xyz="0 ${left * (bodyY/2 + wingY/2)} 0" rpy="0 0 0"/>
+            <axis xyz="0 1 0" rpy="0 0 0"/>
         </joint>
-        
+
+        <xacro:joint_transmission joint_name="${name}_wing" reduction="100" />
     </xacro:macro>
 
     <xacro:macro name="landingGear" params="name front">
