@@ -155,44 +155,19 @@
 
     <xacro:joint_transmission joint_name="propeller"/>
 
-    <link name="leftWingCP">
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <sphere radius="0.1"/>
-            </geometry>
-            <material name="orange"/>
-        </visual>
-    </link>
+    <xacro:sphere_marker 
+        name="leftWingCP"
+        markerX="0"
+        markerY="${wingY/2}"
+        markerZ="${wingZ/2}"
+    />
 
-    <gazebo reference="leftWingCP">
-        <material>Gazebo/Orange</material>
-    </gazebo>
-
-    <joint name="leftWingCP_joint" type="fixed">
-        <parent link="body"/>
-        <child link="leftWingCP"/>
-        <origin xyz="0 ${wingY/2} ${wingZ/2}" rpy="0 0 0"/>
-    </joint>
-
-    <link name="rightWingCP">
-        <visual>
-            <origin xyz="0 ${-wingY/2} ${wingZ/2}" rpy="0 0 0"/>
-            <geometry>
-                <sphere radius="0.1"/>
-            </geometry>
-            <material name="orange"/>
-        </visual>
-    </link>
-
-    <gazebo reference="rightWingCP">
-        <material>Gazebo/Orange</material>
-    </gazebo>
-
-    <joint name="rightWingCP_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="rightWingCP"/>
-    </joint>
+    <xacro:sphere_marker 
+        name="rightWingCP"
+        markerX="0"
+        markerY="${-wingY/2}"
+        markerZ="${wingZ/2}"
+    />
 
     <gazebo>
         <plugin name="propellerTopBlade" filename="libLiftDragPlugin.so">

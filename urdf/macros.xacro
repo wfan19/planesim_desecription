@@ -22,7 +22,7 @@
         />
     </macro>
 
-    <xacro:macro name="joint_transmission" params= "joint_name reduction:=10">
+    <xacro:macro name="joint_transmission" params="joint_name reduction:=10">
         <transmission name="${joint_name}_transmission">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="${joint_name}_joint">
@@ -33,6 +33,28 @@
                 <mechanicalReduction>${reduction}</mechanicalReduction>
             </actuator>
         </transmission>
+    </xacro:macro>
+
+    <xacro:macro name="sphere_marker" params="name markerX markerY markerZ markerRadius:=0.1">
+        <link name="${name}_marker">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <sphere radius="${markerRadius}"/>
+                </geometry>
+                <material name="orange"/>
+            </visual>
+        </link>
+
+        <gazebo reference="${name}_marker">
+            <material>Gazebo/Orange</material>
+        </gazebo>
+
+        <joint name="${name}_marker_joint" type="fixed">
+            <parent link="body"/>
+            <child link="${name}_marker"/>
+            <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+        </joint>
     </xacro:macro>
 
 
