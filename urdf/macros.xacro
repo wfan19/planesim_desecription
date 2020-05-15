@@ -81,14 +81,51 @@
 
         </gazebo>
 
-        <joint name="${name}_wing_joint" type="continuous">
+        <joint name="${name}_wing_joint" type="fixed">
             <parent link="body"/>
             <child link="${name}_wing"/>
             <origin xyz="0 ${left * (bodyY/2 + wingY/2)} 0" rpy="0 0 0"/>
             <axis xyz="0 1 0" rpy="0 0 0"/>
         </joint>
 
-        <xacro:joint_transmission joint_name="${name}_wing" reduction="100" />
+        <link name="${name}_aileron">
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/> 
+                <mass value="${wingMass/5}"/>
+                <xacro:box_inertia m="${wingMass/5}" x="${wingX/5}" y="${wingY}" z="${wingZ}"/>
+            </inertial>
+
+            <collision> 
+                <origin xyz="0 0 0" rpy="0 0 0"/>  
+                <geometry> 
+                    <box size="${wingX/5} ${wingY} ${wingZ}"/> 
+                </geometry> 
+            </collision>
+
+            <visual> 
+                <origin xyz="0 0 0" rpy="0 0 0"/> 
+                <geometry> 
+                    <box size="${wingX/5} ${wingY} ${wingZ}"/> 
+                </geometry> 
+
+                <!-- Port/Starboard colors -->
+                <xacro:if value="${left == 1}">
+                    <material name="red"/>
+                </xacro:if>
+                <xacro:unless value="${left == 1}">
+                    <material name="green"/>
+                </xacro:unless>
+            </visual>
+        </link>
+
+        <joint name="${name}_aileron_joint" type="continuous">
+            <parent link="${name}_wing" />
+            <child link="${name}_aileron" />
+            <origin xyz="${-wingX/2 + -wingX/10} 0 0" rpy="0 0 0" />
+            <axis xyz="0 1 0" rpy="0 0 0" />
+        </joint>
+
+        <joint_transmission joint_name="${name}_aileron" reduction="100"/>
     </xacro:macro>
 
     <xacro:macro name="landingGear" params="name front">

@@ -62,7 +62,7 @@
     </link>
 
     <gazebo reference="body">
-        <material>Gazebo/Orange</material>
+        <material>Gazebo/Gray</material>
     </gazebo>
 
     <link name="base_link"/>
@@ -155,6 +155,45 @@
 
     <xacro:joint_transmission joint_name="propeller"/>
 
+    <link name="leftWingCP">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="0.1"/>
+            </geometry>
+            <material name="orange"/>
+        </visual>
+    </link>
+
+    <gazebo reference="leftWingCP">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+
+    <joint name="leftWingCP_joint" type="fixed">
+        <parent link="body"/>
+        <child link="leftWingCP"/>
+        <origin xyz="0 ${wingY/2} ${wingZ/2}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="rightWingCP">
+        <visual>
+            <origin xyz="0 ${-wingY/2} ${wingZ/2}" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="0.1"/>
+            </geometry>
+            <material name="orange"/>
+        </visual>
+    </link>
+
+    <gazebo reference="rightWingCP">
+        <material>Gazebo/Orange</material>
+    </gazebo>
+
+    <joint name="rightWingCP_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="rightWingCP"/>
+    </joint>
+
     <gazebo>
         <plugin name="propellerTopBlade" filename="libLiftDragPlugin.so">
             <a0>0.4</a0>
@@ -190,7 +229,7 @@
             <link_name>propeller</link_name>
         </plugin>
 
-        <plugin name="leftWing" filename="libLiftDragPlugin.so">
+        <plugin name="leftWing" filename="libplanesim_liftdrag.so">
             <a0>0.05984281113</a0>
             <cla>4.752798721</cla>
             <cda>0.6417112299</cda>
@@ -200,14 +239,16 @@
             <cda_stall>-0.9233984055</cda_stall>
             <cma_stall>0</cma_stall>
             <air_density> 1.2041 </air_density>
-            <cp> ${wingX/2} ${wingY/2} 0</cp>
+            <cp> 0 ${wingY/2} ${wingZ/2}</cp>
             <area> ${(wingX/2) * (wingY/2)}</area>
             <forward> 1 0 0 </forward>
             <upward> 0 0 1 </upward>
-            <link_name>left_wing</link_name>
+            <link_name>base_link</link_name>
+            <control_joint_name>left_aileron_joint</control_joint_name>
+            <control_joint_rad_to_cl>-2.0</control_joint_rad_to_cl>
         </plugin>
 
-        <plugin name="rightWing" filename="libLiftDragPlugin.so">
+        <plugin name="rightWing" filename="libplanesim_liftdrag.so">
             <a0>0.05984281113</a0>
             <cla>4.752798721</cla>
             <cda>0.6417112299</cda>
@@ -217,11 +258,13 @@
             <cda_stall>-0.9233984055</cda_stall>
             <cma_stall>0</cma_stall>
             <air_density> 1.2041 </air_density>
-            <cp> ${wingX/2} ${wingY/2} 0</cp>
+            <cp> 0 ${-wingY/2} ${wingZ/2}</cp>
             <area> ${(wingX/2) * (wingY/2)}</area>
             <forward> 1 0 0 </forward>
             <upward> 0 0 1 </upward>
-            <link_name>right_wing</link_name>
+            <link_name>base_link</link_name>
+            <control_joint_name>right_aileron_joint</control_joint_name>
+            <control_joint_rad_to_cl>-2.0</control_joint_rad_to_cl>
         </plugin>
 
         <!-- <controller:gazebo_ros_imu name="imu_controller" plugin="libgazebo_ros_imu.so">
