@@ -110,7 +110,7 @@
             <axis xyz="0 1 0" rpy="0 0 0"/>
         </joint>
 
-        <link name="${name}_aileron">
+        <link name="${name}_controlsurface">
             <inertial>
                 <origin xyz="0 0 0" rpy="0 0 0"/> 
                 <mass value="${wingMass/5}"/>
@@ -140,14 +140,14 @@
             </visual>
         </link>
 
-        <joint name="${name}_aileron_joint" type="continuous">
+        <joint name="${name}_controlsurface_joint" type="continuous">
             <parent link="${name}_wing" />
-            <child link="${name}_aileron" />
+            <child link="${name}_controlsurface" />
             <origin xyz="${-wingX/2 + -wingX/10} 0 0" rpy="0 0 0" />
             <axis xyz="0 1 0" rpy="0 0 0" />
         </joint>
 
-        <joint_transmission joint_name="${name}_aileron" reduction="100"/>
+        <joint_transmission joint_name="${name}_controlsurface" reduction="100"/>
     </xacro:macro>
 
     <xacro:macro name="landingGear" params="name front">

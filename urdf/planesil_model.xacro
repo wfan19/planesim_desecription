@@ -3,36 +3,41 @@
     <xacro:include filename="$(find planesim_description)/urdf/materials.xacro" />
     <xacro:include filename="$(find planesim_description)/urdf/macros.xacro" />
     
-    <xacro:property name="PI" value="3.14"/>
+    <xacro:property name="PI" value="3.14" />
 
-    <xacro:property name="bodyY" value="0.5"/>
-    <xacro:property name="bodyX" value="6"/>
-    <xacro:property name="bodyZ" value="0.5"/>
-    <xacro:property name="bodyMass" value="300"/>
+    <xacro:property name="bodyY" value="0.5" />
+    <xacro:property name="bodyX" value="6" />
+    <xacro:property name="bodyZ" value="0.5" />
+    <xacro:property name="bodyMass" value="300" />
 
-    <xacro:property name="wingY" value="5"/>
-    <xacro:property name="wingX" value="1"/>
-    <xacro:property name="wingZ" value="${bodyZ/4}"/>
-    <xacro:property name="wingMass" value="100"/>
+    <xacro:property name="wingY" value="5" />
+    <xacro:property name="wingX" value="1" />
+    <xacro:property name="wingZ" value="${bodyZ/4}" />
+    <xacro:property name="wingMass" value="100" />
 
-    <xacro:property name="landingGearY" value="${bodyY}"/>
-    <xacro:property name="landingGearX" value="0.125"/>
-    <xacro:property name="landingGearZ" value="1"/>
-    <xacro:property name="landingGearMass" value="10"/>
+    <xacro:property name="landingGearY" value="${bodyY}" />
+    <xacro:property name="landingGearX" value="0.125" />
+    <xacro:property name="landingGearZ" value="1" />
+    <xacro:property name="landingGearMass" value="10" />
 
-    <xacro:property name="wheelWidth" value="0.1"/>
-    <xacro:property name="wheelRadius" value="0.25"/>
-    <xacro:property name="wheelMass" value="5"/>
+    <xacro:property name="wheelWidth" value="0.1 "/>
+    <xacro:property name="wheelRadius" value="0.25 "/>
+    <xacro:property name="wheelMass" value="5" />
 
-    <xacro:property name="propellerBlockX" value="0.25"/>
-    <xacro:property name="propellerBlockY" value="${bodyY/2}"/>
+    <xacro:property name="propellerBlockX" value="0.25" />
+    <xacro:property name="propellerBlockY" value="${bodyY/2}" />
     <xacro:property name="propellerBlockZ" value="${bodyZ/2}" />
-    <xacro:property name="propellerBlockMass" value="5"/>
+    <xacro:property name="propellerBlockMass" value="5" />
 
-    <xacro:property name="propellerX" value="1.5"/>      <!-- Length of blade -->
-    <xacro:property name="propellerY" value="0.2"/>   <!-- Width of blade -->
-    <xacro:property name="propellerZ" value="0.1"/>    <!-- Thickness of blade -->
-    <xacro:property name="propellerMass" value="2"/>
+    <xacro:property name="propellerX" value="1.5" />      <!-- Length of blade -->
+    <xacro:property name="propellerY" value="0.2" />   <!-- Width of blade -->
+    <xacro:property name="propellerZ" value="0.1" />    <!-- Thickness of blade -->
+    <xacro:property name="propellerMass" value="2" />
+
+    <xacro:property name="elevatorX" value="${wingX/2}" />
+    <xacro:property name="elevatorY" value="${bodyY*2}" />
+    <xacro:property name="elevatorZ" value="${bodyZ}" />
+    <xacro:property name="elevatorMass" value="40" />
 
     <!-- X axis is down the runway -->
     <!-- Y axis is to the left of the runway, looking down -->
@@ -70,7 +75,6 @@
         <parent link="base_link"/>
         <child link="body"/>
     </joint>
-
 
     <xacro:wing name="left" left="1"/>
     <xacro:wing name="right" left="-1"/>
@@ -155,6 +159,44 @@
 
     <xacro:joint_transmission joint_name="propeller"/>
 
+    <link name="elevator">
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+                <mass value="${elevatorMass}"/>
+                <xacro:box_inertia m="${elevatorMass}" x="${elevatorX}" y="${elevatorY}" z="${elevatorZ}"/>
+            </inertial>
+
+            <collision> 
+                <origin xyz="0 0 0" rpy="0 0 0"/>  
+                <geometry> 
+                    <box size="${elevatorX} ${elevatorY} ${elevatorZ}"/> 
+                </geometry> 
+            </collision>
+
+            <visual> 
+                <origin xyz="0 0 0" rpy="0 0 0"/> 
+                <geometry> 
+                    <box size="${elevatorX} ${elevatorY} ${elevatorZ}"/> 
+                </geometry> 
+
+                <!-- Port/Starboard colors -->
+                <xacro:if value="${left == 1}">
+                    <material name="red"/>
+                </xacro:if>
+                <xacro:unless value="${left == 1}">
+                    <material name="green"/>
+                </xacro:unless>
+            </visual>
+    </link>
+
+    <joint name="elevator_joint" type="fixed">
+        <parent link="body" />
+        <child link="elevator" />
+        <origin xyz="${-bodyX/2} 0 0" rpy="0 0 0" />
+    </joint>
+
+    <!-- <joint_transmission joint_name="elevator_control" reduction="100"/> -->
+
     <xacro:sphere_marker 
         name="leftWingCP"
         markerX="0"
@@ -219,7 +261,7 @@
             <forward> 1 0 0 </forward>
             <upward> 0 0 1 </upward>
             <link_name>base_link</link_name>
-            <control_joint_name>left_aileron_joint</control_joint_name>
+            <control_joint_name>left_controlsurface_joint</control_joint_name>
             <control_joint_rad_to_cl>-2.0</control_joint_rad_to_cl>
         </plugin>
 
@@ -238,7 +280,7 @@
             <forward> 1 0 0 </forward>
             <upward> 0 0 1 </upward>
             <link_name>base_link</link_name>
-            <control_joint_name>right_aileron_joint</control_joint_name>
+            <control_joint_name>right_controlsurface_joint</control_joint_name>
             <control_joint_rad_to_cl>-2.0</control_joint_rad_to_cl>
         </plugin>
 
@@ -254,43 +296,6 @@
         </controller:gazebo_ros_imu> -->
         
     </gazebo>
-
-
-
-    <xacro:property name="counterWeightCoGXOffset" value="${((propellerBlockMass * propellerBlockX/2) + propellerMass * (propellerBlockX/2 + propellerZ/2))
-                                                /(propellerBlockMass + propellerMass)}"/> <!-- Center of gravity from the edge of the body -->
-    <link name="counterWeight">
-        <inertial>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <mass value="${propellerBlockMass + propellerMass}"/>
-            <xacro:box_inertia m="${propellerBlockMass + propellerMass}" x="${2 * counterWeightCoGXOffset}" y="${bodyY}" z="${bodyZ}"/>
-        </inertial>
-
-        <collision> 
-            <origin xyz="0 0 0" rpy="0 0 0"/> 
-            <geometry> 
-                <box size="${2 * counterWeightCoGXOffset} ${bodyY} ${bodyZ}"/> 
-            </geometry> 
-        </collision>
-
-        <visual> 
-            <origin xyz="0 0 0" rpy="0 0 0"/> 
-            <geometry> 
-                <box size="${2 * counterWeightCoGXOffset} ${bodyY} ${bodyZ}"/> 
-            </geometry> 
-            <material name="orange"/>
-        </visual>
-    </link>
-
-    <gazebo reference="propellerBlock">
-        <material>Gazebo/Orange</material>
-    </gazebo>
-
-    <joint name="counterWeight_joint" type="fixed">
-        <parent link="body"/>
-        <child link="counterWeight"/>
-        <origin xyz="${-(bodyX/2 + counterWeightCoGXOffset)} 0 0" rpy="0 0 0"/>
-    </joint>
 
     <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
