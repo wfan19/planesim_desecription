@@ -34,9 +34,9 @@
     <xacro:property name="propellerZ" value="0.1" />    <!-- Thickness of blade -->
     <xacro:property name="propellerMass" value="2" />
 
-    <xacro:property name="elevatorX" value="${wingX/2}" />
-    <xacro:property name="elevatorY" value="${bodyY*2}" />
-    <xacro:property name="elevatorZ" value="${bodyZ}" />
+    <xacro:property name="elevatorX" value="${wingX/3}" />
+    <xacro:property name="elevatorY" value="${bodyY*3}" />
+    <xacro:property name="elevatorZ" value="${wingZ}" />
     <xacro:property name="elevatorMass" value="40" />
 
     <!-- X axis is down the runway -->
@@ -179,23 +179,52 @@
                     <box size="${elevatorX} ${elevatorY} ${elevatorZ}"/> 
                 </geometry> 
 
-                <!-- Port/Starboard colors -->
-                <xacro:if value="${left == 1}">
-                    <material name="red"/>
-                </xacro:if>
-                <xacro:unless value="${left == 1}">
-                    <material name="green"/>
-                </xacro:unless>
+                <material name="blue"/>
             </visual>
     </link>
+
+    <gazebo reference="elevator">
+        <material>Gazebo/Blue</material>
+    </gazebo>
 
     <joint name="elevator_joint" type="fixed">
         <parent link="body" />
         <child link="elevator" />
-        <origin xyz="${-bodyX/2} 0 0" rpy="0 0 0" />
+        <origin xyz="${-bodyX/2 + -elevatorX/2} 0 0" rpy="0 0 0" />
     </joint>
 
-    <!-- <joint_transmission joint_name="elevator_control" reduction="100"/> -->
+    <link name="elevator_controlsurface">
+        <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/> 
+                <mass value="${elevatorMass/5}"/>
+                <xacro:box_inertia m="${elevatorMass/5}" x="${elevatorX/5}" y="${elevatorY}" z="${elevatorZ}"/>
+            </inertial>
+
+            <collision> 
+                <origin xyz="0 0 0" rpy="0 0 0"/>  
+                <geometry> 
+                    <box size="${elevatorX/5} ${elevatorY} ${elevatorZ}"/> 
+                </geometry> 
+            </collision>
+
+            <visual> 
+                <origin xyz="0 0 0" rpy="0 0 0"/> 
+                <geometry> 
+                    <box size="${elevatorX/5} ${elevatorY} ${elevatorZ}"/> 
+                </geometry> 
+
+                <material name="blue" />
+            </visual>
+    </link>
+
+    <joint name="elevator_controlsurface_joint" type="continuous">
+        <parent link="elevator" />
+        <child link="elevator_controlsurface" />
+        <origin xyz="${6 * -elevatorX/10} 0 0" rpy="0 0 0" />
+        <axis xyz="0 1 0" rpy="0 0 0" />
+    </joint>
+
+    <joint_transmission joint_name="elevator_controlsurface" reduction="100"/>
 
     <xacro:sphere_marker 
         name="leftWingCP"
