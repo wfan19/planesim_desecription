@@ -8,12 +8,12 @@
     <xacro:property name="bodyY" value="0.5" />
     <xacro:property name="bodyX" value="6" />
     <xacro:property name="bodyZ" value="0.5" />
-    <xacro:property name="bodyMass" value="300" />
+    <xacro:property name="bodyMass" value="100" />
 
     <xacro:property name="wingY" value="5" />
     <xacro:property name="wingX" value="1" />
     <xacro:property name="wingZ" value="${bodyZ/4}" />
-    <xacro:property name="wingMass" value="100" />
+    <xacro:property name="wingMass" value="50" />
 
     <xacro:property name="landingGearY" value="${bodyY}" />
     <xacro:property name="landingGearX" value="0.125" />
@@ -35,9 +35,9 @@
     <xacro:property name="propellerMass" value="2" />
 
     <xacro:property name="elevatorX" value="${wingX/3}" />
-    <xacro:property name="elevatorY" value="${bodyY*3}" />
+    <xacro:property name="elevatorY" value="${wingY/2}" />
     <xacro:property name="elevatorZ" value="${wingZ}" />
-    <xacro:property name="elevatorMass" value="40" />
+    <xacro:property name="elevatorMass" value="125" />
 
     <!-- X axis is down the runway -->
     <!-- Y axis is to the left of the runway, looking down -->
@@ -190,37 +190,37 @@
     <joint name="elevator_joint" type="fixed">
         <parent link="body" />
         <child link="elevator" />
-        <origin xyz="${-bodyX/2 + -elevatorX/2} 0 0" rpy="0 0 0" />
+        <origin xyz="${-bodyX/2 + elevatorX/2} 0 0" rpy="0 0 0" />
     </joint>
 
     <link name="elevator_controlsurface">
         <inertial>
-                <origin xyz="0 0 0" rpy="0 0 0"/> 
-                <mass value="${elevatorMass/5}"/>
-                <xacro:box_inertia m="${elevatorMass/5}" x="${elevatorX/5}" y="${elevatorY}" z="${elevatorZ}"/>
-            </inertial>
+            <origin xyz="${-elevatorX/10} 0 0" rpy="0 0 0"/> 
+            <mass value="${elevatorMass/5}"/>
+            <xacro:box_inertia m="${elevatorMass/5}" x="${elevatorX/3}" y="${elevatorY}" z="${elevatorZ/2}"/>
+        </inertial>
 
-            <collision> 
-                <origin xyz="0 0 0" rpy="0 0 0"/>  
-                <geometry> 
+        <collision> 
+            <origin xyz="${-elevatorX/10} 0 0" rpy="0 0 0"/>  
+            <geometry> 
                     <box size="${elevatorX/5} ${elevatorY} ${elevatorZ}"/> 
-                </geometry> 
-            </collision>
+            </geometry> 
+        </collision>
 
-            <visual> 
-                <origin xyz="0 0 0" rpy="0 0 0"/> 
-                <geometry> 
-                    <box size="${elevatorX/5} ${elevatorY} ${elevatorZ}"/> 
-                </geometry> 
+        <visual> 
+            <origin xyz="${-elevatorX/10} 0 0" rpy="0 0 0"/> 
+            <geometry> 
+                <box size="${-elevatorX/3} ${elevatorY} ${elevatorZ/2}"/> 
+            </geometry> 
 
-                <material name="blue" />
-            </visual>
+            <material name="blue" />
+        </visual>
     </link>
 
     <joint name="elevator_controlsurface_joint" type="continuous">
         <parent link="elevator" />
         <child link="elevator_controlsurface" />
-        <origin xyz="${6 * -elevatorX/10} 0 0" rpy="0 0 0" />
+        <origin xyz="${-elevatorX/2} 0 0" rpy="0 0 0" />
         <axis xyz="0 1 0" rpy="0 0 0" />
     </joint>
 
@@ -240,6 +240,13 @@
         markerZ="${wingZ/2}"
     />
 
+    <xacro:sphere_marker 
+        name="elevatorCP"
+        markerX="${-bodyX/2 + -elevatorX/2}"
+        markerY="0"
+        markerZ="${elevatorZ/2}"
+    />
+
     <gazebo>
         <plugin name="propellerTopBlade" filename="libLiftDragPlugin.so">
             <a0>0.4</a0>
@@ -250,7 +257,7 @@
             <cla_stall>-3.85</cla_stall>
             <cda_stall>-0.9233984055</cda_stall>
             <cma_stall>0</cma_stall>
-            <air_density>1.2041</air_density>
+            <air_density>1</air_density>
             <cp> ${propellerZ/2} 0 ${propellerX/4} </cp>
             <area>${propellerX * propellerY / 2}</area>
             <forward> 0 1 0 </forward>
@@ -267,7 +274,7 @@
             <cla_stall>-3.85</cla_stall>
             <cda_stall>-0.9233984055</cda_stall>
             <cma_stall>0</cma_stall>
-            <air_density>1.2041</air_density>
+            <air_density>1</air_density>
             <cp> ${propellerZ/2} 0 ${-propellerX/4} </cp>
             <area> 0.5 </area>
             <forward> 0 -1 0 </forward>
@@ -284,7 +291,7 @@
             <cla_stall>-3.85</cla_stall>
             <cda_stall>-0.9233984055</cda_stall>
             <cma_stall>0</cma_stall>
-            <air_density> 1.2041 </air_density>
+            <air_density> 2 </air_density>
             <cp> 0 ${wingY/2} ${wingZ/2}</cp>
             <area> ${(wingX/2) * (wingY/2)}</area>
             <forward> 1 0 0 </forward>
@@ -303,7 +310,7 @@
             <cla_stall>-3.85</cla_stall>
             <cda_stall>-0.9233984055</cda_stall>
             <cma_stall>0</cma_stall>
-            <air_density> 1.2041 </air_density>
+            <air_density> 2 </air_density>
             <cp> 0 ${-wingY/2} ${wingZ/2}</cp>
             <area> ${(wingX/2) * (wingY/2)}</area>
             <forward> 1 0 0 </forward>
@@ -313,16 +320,36 @@
             <control_joint_rad_to_cl>-2.0</control_joint_rad_to_cl>
         </plugin>
 
-        <!-- <controller:gazebo_ros_imu name="imu_controller" plugin="libgazebo_ros_imu.so">
-            <alwaysOn>true</alwaysOn>
-            <updateRate>50.0</updateRate> 
-            <bodyName>body</bodyName>
-            <topicName>imu_data</topicName>
-            <gaussianNoise>2.89e-08</gaussianNoise>
-            <xyzOffsets>0 0 0</xyzOffsets>
-            <rpyOffsets>0 0 0</rpyOffsets>
-            <interface:position name="imu_position"/>
-        </controller:gazebo_ros_imu> -->
+        <plugin name="elevator" filename="libplanesim_liftdrag.so">
+            <a0>0.05984281113</a0>
+            <cla>4.752798721</cla>
+            <cda>0.6417112299</cda>
+            <cma>-1.8</cma>
+            <alpha_stall>0.3391428111</alpha_stall>
+            <cla_stall>-3.85</cla_stall>
+            <cda_stall>-0.9233984055</cda_stall>
+            <cma_stall>0</cma_stall>
+            <air_density> 2 </air_density>
+            <cp> ${-bodyX/2 + -elevatorX/2} 0 ${elevatorZ/2}</cp>
+            <area> ${(elevatorX/2) * (elevatorY/2)}</area>
+            <forward> 1 0 0 </forward>
+            <upward> 0 0 1 </upward>
+            <link_name>base_link</link_name>
+            <control_joint_name>elevator_controlsurface_joint</control_joint_name>
+            <control_joint_rad_to_cl>-2.0</control_joint_rad_to_cl>
+        </plugin>
+
+        <!-- <plugin name="ForceTester_left" filename="libgazebo_forcetest_plugin.so">
+            <name>left_wing</name>
+            <targetPoint>0 ${wingY/2} 0</targetPoint>
+            <link_name>base_link</link_name>
+        </plugin>
+
+        <plugin name="ForceTester_right" filename="libgazebo_forcetest_plugin.so">
+            <name>right_wing</name>
+            <targetPoint>0 ${-wingY/2} 0</targetPoint>
+            <link_name>base_link</link_name>
+        </plugin> -->
         
     </gazebo>
 
